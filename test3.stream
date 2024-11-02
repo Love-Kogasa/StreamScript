@@ -1,0 +1,5 @@
+"https://example.com"
+$Fetch
+$Std( "example.com.html" )
+$ToString
+$Console

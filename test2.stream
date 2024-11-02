@@ -1,0 +1,4 @@
+"https://example.com"
+$Fetch
+$Console
+请求网站并打印到控制台

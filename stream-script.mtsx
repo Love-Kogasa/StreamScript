@@ -1,0 +1,15 @@
+{
+  name: ["stream-script", ".stream"]
+  styles: [
+    "default" > "namespace"
+  ]
+  contains: [
+    {match: /\$[\w\_]+/, 0: "variable"}
+    {match: /\@[^\s]+/, 0: "meta"}
+    {match: keywordsToRegex(
+      "{ } [ ] = ( ) $ > < >= <= ! != == === + - * / % ? | & , ; :"
+    ), 0: "propKey" }
+    {builtin: #C_QUOTED_STRING#}
+    {builtin: #C_NUMBER#}
+  ]
+}

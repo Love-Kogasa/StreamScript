@@ -1,0 +1,7 @@
+@log 关键字
+;;;
+输出helloWorld
+"YourName : "
+$Std
+$Console( "welcome" )
+;;;
