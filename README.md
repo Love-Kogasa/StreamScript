@@ -24,6 +24,20 @@ $Std( "example.com.html" )
 $ToString
 $Console
 ```
+### Get Minecraft Server Name
+```bash
+"Server Ip: "
+$Std
+$ToUrl
+$Concat( "http://mcapi.org/server/status?ip=" )( true )
+$Concat( "&port=25565" )
+$Fetch( true )
+$ParseObject( "server" )( "name" )
+$Concat( "服务器名称: " )( true )
+$Console
+$ClearTo( "-----\n获取完毕，使用Ctrl-C退出程序" )
+$Console
+```
 ## Compiler
 使用ssc编译或执行脚本
 ```bash
