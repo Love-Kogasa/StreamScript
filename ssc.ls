@@ -36,7 +36,8 @@ else
    console.log "Build Succeed"
    if setting.target is "bin"
       console.log "Compiling Now"
-      fs.rename setting.output, "_" + setting.output
-      execSync "qjsc _#{setting.output} -o #{setting.output}"
+      fs.renameSync setting.output, "_" + setting.output
+      execSync "qjsc _#{setting.output}"
+      fs.renameSync "a.out", setting.output
       fs.unlinkSync "_" + setting.output
       console.log "Compile Succeed"
