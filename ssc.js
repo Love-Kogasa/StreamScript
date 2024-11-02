@@ -18,7 +18,7 @@
     setting[key] = val;
   }
   if (typeof setting.setting === "string") {
-    setting = JSON.parse(fs.readFileSync(setting.setting).toString());
+    setting = import$(clone$(setting), JSON.parse(fs.readFileSync(setting.setting).toString()));
   }
   output = "";
   if (!setting.output) {
@@ -40,5 +40,14 @@
       fs.unlinkSync("_" + setting.output);
       console.log("Compile Succeed");
     }
+  }
+  function import$(obj, src){
+    var own = {}.hasOwnProperty;
+    for (var key in src) if (own.call(src, key)) obj[key] = src[key];
+    return obj;
+  }
+  function clone$(it){
+    function fun(){} fun.prototype = it;
+    return new fun;
   }
 }).call(this);

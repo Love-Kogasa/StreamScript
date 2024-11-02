@@ -36,8 +36,70 @@ fet =
    _body : ""
    node : yes
    read : -> @_body
-   write : ( url ) ->>
-      @_body = await (await fetch url).text!
+   write : ( url, json = no ) ->>
+      if Array.isArray url
+         for link in url
+            @write link
+      else
+         if json
+            @_body = await (await fetch url).json!
+         else
+            @_body = await (await fetch url).text!
+
+# 这个节点完全是因为我写完解释器就一点都不想动了()
+cstr =
+   _ret : void
+   node : yes
+   read : -> @_ret
+   write : ( text, string, re = no ) ->
+      if typeof text is "string"
+         if re
+            @_ret = (string or "") + text
+         else
+            @_ret = text + (string or "")
+      else
+         @_ret = text with (string or {})
+
+tou =
+   _ret : ""
+   node : yes
+   read : -> @_ret
+   write : ( string ) ->
+      @_ret = encodeURI string
+
+pau =
+   _ret : ""
+   node : yes
+   read : -> @_ret
+   write : ( string ) ->
+      @_ret = decodeURI string
+
+json =
+   _ret : void
+   node : yes
+   read : -> @_ret
+   write : ( string, sj ) ->
+      @_ret = if typeof string is "string" then JSON.parse string
+      else JSON.stringify string, 0, sj
+
+pobj =
+   _value : void
+   node : yes
+   read : -> @_value
+   write : ( obj, ...keys ) ->
+      nobj = obj
+      nvalue = void
+      for key in keys
+         nvalue = nobj[key]
+         nobj = nvalue
+      @_value = nvalue
+
+jsn =
+   _ret : void
+   node : yes
+   read : -> @_ret
+   write : ( ...arg ) ->
+      @_ret = eval( arg.0 ).apply global, arg.slice 1
 
 tostr =
    _string : ""
@@ -49,13 +111,25 @@ tobuf =
    _buf : void
    node : yes
    read : -> @_buf
-   write : ( string ) -> Buffer.from string
+   write : ( string ) -> @_buf = Buffer.from string
+
+clear =
+   read : -> it
+   write : -> void
 
 export valueMap = new Map!
 valueMap.set "Std", std
 valueMap.set "Fetch", fet
 valueMap.set "Console", con
+valueMap.set "JsFunc", jsn
+valueMap.set "Json", json
+valueMap.set "ToUrl", tou
+valueMap.set "ParseObject", pobj
+valueMap.set "ParseUrl", pau
+valueMap.set "Concat", cstr
 valueMap.set "ToString", tostr
+valueMap.set "ToBuffer", tobuf
+valueMap.set "ClearTo", clear
 
 export keywordMap = new Map!
 keywordMap.set "@log", ( strings, values ) ->
@@ -69,7 +143,11 @@ keywordMap.set "@val", ( args, values ) ->
    values.set do
       args.0
       do
-         _value : JSON.parse args.join " "
+         _value : do ->
+            try
+               JSON.parse args.slice(1).join " "
+            catch err
+               args.slice(1).join " "
          node : yes
          read : -> @_value
          write : ( value ) ->

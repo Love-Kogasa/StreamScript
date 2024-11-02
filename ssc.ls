@@ -12,7 +12,7 @@ for arg in args
    [key, val] = arg.split "="
    setting[key] = val
 if typeof setting.setting is "string"
-   setting = JSON.parse fs.readFileSync(setting.setting).toString!
+   setting = setting with JSON.parse fs.readFileSync(setting.setting).toString!
 output = ""
 if not setting.output
    stream.runStream fs.readFileSync(setting.input).toString!
