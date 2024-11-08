@@ -253,7 +253,7 @@
     }
     return md;
     function fn$(val, key){
-      return md.set(key, value);
+      return md.set(key, val);
     }
   };
   out$.runStream = runStream = async function(code, values, keywords){

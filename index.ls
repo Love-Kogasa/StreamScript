@@ -188,7 +188,7 @@ export concatMap = (...m)->
    md = new Map
    for map in m
       map.forEach ( val, key)->
-         md.set key, value
+         md.set key, val
    md
 
 # 解释器
